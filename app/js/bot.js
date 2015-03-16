@@ -1,6 +1,7 @@
 function Bot() {
     var BOT_RADIUS = 2;
     var BOT_COLOR = 0x000000;
+    var MOVEMENT_SPEED = 4;
 
     var agent = new Agent("Bot", BOT_RADIUS, BOT_COLOR);
 
@@ -86,8 +87,8 @@ function Bot() {
     function addRandomVelocity() {
         Matter.Body.setVelocity(agent.getBody(),
             {
-                x: -2 + Math.random() * 4,
-                y: -2 + Math.random() * 4
+                x: -MOVEMENT_SPEED/2 + Math.random() * MOVEMENT_SPEED,
+                y: -MOVEMENT_SPEED/2 + Math.random() * MOVEMENT_SPEED
             });
     }
 
@@ -124,8 +125,8 @@ function Bot() {
     function goToAgent(target) {
         Matter.Body.setVelocity(agent.getBody(),
             {
-                x: (target.getPosition().x - agent.getPosition().x) > 0 ? 1 : -1,
-                y: (target.getPosition().y - agent.getPosition().y) > 0 ? 1 : -1
+                x: ((target.getPosition().x - agent.getPosition().x) > 0 ? MOVEMENT_SPEED : -MOVEMENT_SPEED) / 2,
+                y: ((target.getPosition().y - agent.getPosition().y) > 0 ? MOVEMENT_SPEED : -MOVEMENT_SPEED) / 2
             });
     }
 
