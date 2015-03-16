@@ -72,14 +72,14 @@ function Bot() {
             case "Release resource":
                 releaseResource();
                 return;
+            case "Move to resource":
+                goToAgent(targetResource);
+                return;
             case "Follow agent":
                 goToAgent(targetAgent);
                 return;
             case "Move random":
                 addRandomVelocity();
-                return;
-            case "Move to resource":
-                goToAgent(targetResource);
                 return;
         }
     }
