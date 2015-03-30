@@ -1,13 +1,23 @@
-function World() {
+function World(team1, team2) {
 
   var WIDTH = 800;
   var HEIGHT = 600;
-  var WALL_THICKNESS = 50;
+  var WALL_THICKNESS = 30;
+
+  var CENTER_X = WALL_THICKNESS + 0.5 * (WIDTH - WALL_THICKNESS*2);
+  var CENTER_Y = WALL_THICKNESS + 0.5 * (HEIGHT - WALL_THICKNESS*2);
+  var MIN_X = WALL_THICKNESS;
+  var MAX_X = WIDTH - WALL_THICKNESS;
+  var MIN_Y = WALL_THICKNESS;
+  var MAX_Y = HEIGHT - WALL_THICKNESS;
+
+  var GOAL_TARGET_SIZE = 80;
+  var GOAL_POST_SIZE = 20;
+  var GOAL_THICKNESS = 5;
 
   var agents = [];
 
   var botsContainer = new PIXI.DisplayObjectContainer();
-
 
   var ground    = Matter.Bodies.rectangle(WIDTH/2,
                                           HEIGHT-WALL_THICKNESS/2,
@@ -32,6 +42,7 @@ function World() {
                                           WIDTH,
                                           WALL_THICKNESS,
                                           { isStatic: true });
+
 
 
   var physics = new Physics(WIDTH, HEIGHT, WALL_THICKNESS);
@@ -62,11 +73,50 @@ function World() {
     agent.setPhysicsHelper(physicsHelper);
   }
 
-  function setRandomPosition(agent) {
-    agent.setPosition({x:WALL_THICKNESS + Math.random() * WIDTH - WALL_THICKNESS*2,
-                       y:WALL_THICKNESS + Math.random() * HEIGHT - WALL_THICKNESS*2});
+  function addLeftGoal(team) {
+    var target = new GoalTarget(team, GOAL_TARGET_SIZE, GOAL_THICKNESS);
+    add(target);
+    target.setPosition({x:MIN_X + GOAL_THICKNESS/2, y:CENTER_Y});
+
+    var post = new GoalPost(team, GOAL_POST_SIZE, GOAL_THICKNESS);
+    add(post);
+    post.setPosition({x: MIN_X + GOAL_POST_SIZE/2, y: CENTER_Y - GOAL_TARGET_SIZE/2 });
+    post = new GoalPost(team, GOAL_POST_SIZE, GOAL_THICKNESS);
+    add(post);
+    post.setPosition({x: MIN_X + GOAL_POST_SIZE/2, y: CENTER_Y + GOAL_TARGET_SIZE/2 });
   }
 
+  function addRightGoal(team) {
+    var target = new GoalTarget(team, GOAL_TARGET_SIZE, GOAL_THICKNESS);
+    add(target);
+    target.setPosition({x:MAX_X - GOAL_THICKNESS/2, y:CENTER_Y});
+    
+    var post = new GoalPost(team, GOAL_POST_SIZE, GOAL_THICKNESS);
+    add(post);
+    post.setPosition({x: MAX_X - GOAL_POST_SIZE/2, y: CENTER_Y - GOAL_TARGET_SIZE/2 });
+    post = new GoalPost(team, GOAL_POST_SIZE, GOAL_THICKNESS);
+    add(post);
+    post.setPosition({x: MAX_X - GOAL_POST_SIZE/2, y: CENTER_Y + GOAL_TARGET_SIZE/2 });
+  }
+
+  addLeftGoal(team1);
+  addRightGoal(team2);
+  
+  function setRandomPosition(agent) {
+    agent.setPosition({x: WALL_THICKNESS + Math.random() * (WIDTH - WALL_THICKNESS*2),
+                       y: WALL_THICKNESS + Math.random() * (HEIGHT - WALL_THICKNESS*2)});
+  }
+
+  function setCenteredX(agent) {
+    agent.setPosition({x: WALL_THICKNESS + 0.5 * (WIDTH - WALL_THICKNESS*2),
+                       y: agent.getPosition().y });
+  }
+  
+  function setCenteredY(agent) {
+    agent.setPosition({x: agent.getPosition().x,
+                       y: WALL_THICKNESS + 0.5 * (HEIGHT - WALL_THICKNESS*2)});
+  }
+  
   function processPerceptions() {
     _.each(agents, function(agentA){
       _.each(agents, function(agentB) {
